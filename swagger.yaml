@@ -1,0 +1,119 @@
+swagger: "2.0"
+info:
+  title: UrlShortener
+  description: Convert long link to short link
+  version: 0.0.1
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - http
+  - https
+basePath: /api
+host: "localhost:8080"
+
+# Responses
+responses:
+  unauthorized:
+    description: Unauthorized
+    schema:
+      $ref: "swagger/responses/error.v1.yml"
+  invalid-request:
+    description: Invalid request
+    schema:
+      $ref: "swagger/responses/error.v1.yml"
+  forbidden:
+    description: Insufficient privilege to execute action.
+    schema:
+      $ref: "swagger/responses/error.v1.yml"
+  not-found:
+    description: Not found.
+    schema:
+      type: string
+  server-error:
+    description: Internal Server Error
+    schema:
+      $ref: "swagger/responses/error.v1.yml"
+
+# Paths
+paths:
+  /analytics/{short-url}:
+    get:
+      tags:
+        - analytics
+      summary: Get analytics for short URL
+      description: Get analytics for short URL
+      operationId: getAnalytics
+      parameters:
+        - name: short-url
+          in: path
+          description: Short URL to get analytics for
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            type: object
+            properties:
+              redirects:
+                type: number
+        401:
+          $ref: "#/responses/unauthorized"
+        404:
+          $ref: "#/responses/not-found"
+        500:
+          $ref: "#/responses/server-error"
+  /url:
+    put:
+      tags:
+        - ShortUrl
+      summary: Create short URL
+      description: Create short URL
+      operationId: createShortUrl
+      parameters:
+        - name: data
+          in: body
+          schema:
+            type: object
+            properties:
+              url:
+                type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "swagger/responses/short_url.yml"
+        400:
+          $ref: "#/responses/invalid-request"
+        # 401:
+        #   $ref: "#/responses/unauthorized"
+
+        500:
+          $ref: "#/responses/server-error"
+  /{short_url}:
+    get:
+      tags:
+        - ShortUrl
+      summary: Get short URL
+      description: Get short URL with a redirect
+      operationId: getShortUrl
+      parameters:
+        - name: short_url
+          in: path
+          description: URL to get
+          required: true
+          type: string
+      responses:
+        302:
+          description: "Redirect to URL"
+          headers:
+            Location:
+              type: "string"
+        # 401:
+        #   $ref: "#/responses/unauthorized"
+        404:
+          $ref: "#/responses/not-found"
+        500:
+          $ref: "#/responses/server-error"

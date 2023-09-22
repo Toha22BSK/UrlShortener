@@ -1,0 +1,6 @@
+title: OK response with short URL
+description: OK response with short URL
+type: object
+properties:
+  short:
+    type: string
