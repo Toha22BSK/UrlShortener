@@ -11,6 +11,7 @@ import (
 
 type UrlService interface {
 	createShortLink(ctx context.Context, Url string) (string, error)
+	getUrl(ctx context.Context, shortUrl string) (string, error)
 }
 
 func Configure(api *operations.BackendCoreAPI, urlService UrlService) {
@@ -33,5 +34,19 @@ func Configure(api *operations.BackendCoreAPI, urlService UrlService) {
 			return short_url.NewCreateShortURLOK().WithPayload(&models.ShortURL{Short: shortUrl})
 		},
 	)
+	api.ShortURLGetShortURLHandler = short_url.GetShortURLHandlerFunc(
+		func(params short_url.GetShortURLParams) middleware.Responder {
 
+			url, err := urlService.getUrl(
+				params.HTTPRequest.Context(),
+				params.ShortURL,
+			)
+			if err != nil {
+				return short_url.NewCreateShortURLInternalServerError().
+					WithPayload(&models.ErrorV1{Message: "Ooops, something went wrong"})
+			}
+
+			return short_url.NewGetShortURLFound().WithLocation(url)
+		},
+	)
 }

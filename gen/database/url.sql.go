@@ -41,20 +41,14 @@ func (q *Queries) CreateUrlWithExpire(ctx context.Context, arg CreateUrlWithExpi
 }
 
 const getUrlByToken = `-- name: GetUrlByToken :one
-SELECT token, url, created_at, expires_at, is_active FROM urls WHERE token = $1
+SELECT Url FROM urls WHERE token = $1
 `
 
-func (q *Queries) GetUrlByToken(ctx context.Context, token string) (Url, error) {
+func (q *Queries) GetUrlByToken(ctx context.Context, token string) (string, error) {
 	row := q.db.QueryRowContext(ctx, getUrlByToken, token)
-	var i Url
-	err := row.Scan(
-		&i.Token,
-		&i.Url,
-		&i.CreatedAt,
-		&i.ExpiresAt,
-		&i.IsActive,
-	)
-	return i, err
+	var url string
+	err := row.Scan(&url)
+	return url, err
 }
 
 const getUrlTokenByUrl = `-- name: GetUrlTokenByUrl :one

@@ -31,3 +31,11 @@ func (apiCfg *apiConfig) createShortLink(ctx context.Context, Url string) (strin
 	}
 	return short_url, nil
 }
+
+func (apiCfg *apiConfig) getUrl(ctx context.Context, short_url string) (string, error) {
+	url, err := apiCfg.DB.GetUrlByToken(ctx, short_url)
+	if err != nil {
+		return "", err
+	}
+	return url, nil
+}
