@@ -34,7 +34,7 @@ func Configure(api *operations.BackendCoreAPI, urlService UrlService) {
 				shortUrl, err = urlService.createShortLinkExpire(
 					params.HTTPRequest.Context(),
 					params.Data.URL,
-					time.Now().UTC().AddDate(0, int(minutes), 0),
+					time.Now().UTC().Add(time.Minute*time.Duration(minutes)),
 				)
 				if err != nil {
 					return short_url.NewCreateShortURLInternalServerError().
