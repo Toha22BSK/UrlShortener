@@ -2,7 +2,6 @@ package urls
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/Toha22BSK/UrlShortener/gen/models"
@@ -31,11 +30,6 @@ func Configure(api *operations.BackendCoreAPI, urlService UrlService) {
 			shortUrl := ""
 			err := error(nil)
 			minutes := params.Data.Minutes + params.Data.Hours*60 + params.Data.Days*24*60
-			fmt.Println(
-				"minutes",
-				minutes,
-				time.Now().UTC().Add(time.Minute*time.Duration(int(minutes))),
-			)
 			if minutes > 0 {
 				shortUrl, err = urlService.createShortLinkExpire(
 					params.HTTPRequest.Context(),
