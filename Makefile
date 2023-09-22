@@ -5,7 +5,7 @@ swagger: clean
 	mkdir gen
 	swagger generate server --with-flatten=minimal -t gen -f ./swagger.yaml --exclude-main -A backendCore
 
-sqlgen:swagger
+sqlgen:
 	sqlc generate
 
 import:
