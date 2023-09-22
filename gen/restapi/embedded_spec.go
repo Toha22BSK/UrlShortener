@@ -91,6 +91,15 @@ func init() {
             "schema": {
               "type": "object",
               "properties": {
+                "days": {
+                  "type": "integer"
+                },
+                "hours": {
+                  "type": "integer"
+                },
+                "minutes": {
+                  "type": "integer"
+                },
                 "url": {
                   "type": "string"
                 }
@@ -269,6 +278,15 @@ func init() {
             "schema": {
               "type": "object",
               "properties": {
+                "days": {
+                  "type": "integer"
+                },
+                "hours": {
+                  "type": "integer"
+                },
+                "minutes": {
+                  "type": "integer"
+                },
                 "url": {
                   "type": "string"
                 }

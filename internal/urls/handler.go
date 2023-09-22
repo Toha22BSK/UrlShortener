@@ -2,6 +2,8 @@ package urls
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/Toha22BSK/UrlShortener/gen/models"
 	"github.com/Toha22BSK/UrlShortener/gen/restapi/operations"
@@ -13,6 +15,7 @@ import (
 
 type UrlService interface {
 	createShortLink(ctx context.Context, Url string) (string, error)
+	createShortLinkExpire(ctx context.Context, Url string, date_expire time.Time) (string, error)
 	getUrl(ctx context.Context, shortUrl string) (string, error)
 	writeLog(ctx context.Context, shortUrl string, msg string) error
 	getAnalitics(ctx context.Context, shortUrl string) (int64, error)
@@ -25,14 +28,34 @@ func Configure(api *operations.BackendCoreAPI, urlService UrlService) {
 				return short_url.NewCreateShortURLBadRequest().
 					WithPayload(&models.ErrorV1{Message: "Not correct params, url is empty"})
 			}
-
-			shortUrl, err := urlService.createShortLink(
-				params.HTTPRequest.Context(),
-				params.Data.URL,
+			shortUrl := ""
+			err := error(nil)
+			minutes := params.Data.Minutes + params.Data.Hours*60 + params.Data.Days*24*60
+			fmt.Println(
+				"minutes",
+				minutes,
+				time.Now().UTC().Add(time.Minute*time.Duration(int(minutes))),
 			)
-			if err != nil {
-				return short_url.NewCreateShortURLInternalServerError().
-					WithPayload(&models.ErrorV1{Message: "Ooops, something went wrong"})
+			if minutes > 0 {
+				shortUrl, err = urlService.createShortLinkExpire(
+					params.HTTPRequest.Context(),
+					params.Data.URL,
+					time.Now().UTC().AddDate(0, int(minutes), 0),
+				)
+				if err != nil {
+					return short_url.NewCreateShortURLInternalServerError().
+						WithPayload(&models.ErrorV1{Message: "Ooops, something went wrong"})
+				}
+			} else {
+
+				shortUrl, err = urlService.createShortLink(
+					params.HTTPRequest.Context(),
+					params.Data.URL,
+				)
+				if err != nil {
+					return short_url.NewCreateShortURLInternalServerError().
+						WithPayload(&models.ErrorV1{Message: "Ooops, something went wrong"})
+				}
 			}
 
 			return short_url.NewCreateShortURLOK().WithPayload(&models.ShortURL{Short: shortUrl})

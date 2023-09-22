@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"time"
 
 	"github.com/Toha22BSK/UrlShortener/gen/database"
 )
@@ -20,6 +21,29 @@ func NewApiConfig(db *database.Queries) *apiConfig {
 
 func (apiCfg *apiConfig) createShortLink(ctx context.Context, Url string) (string, error) {
 	short_url, err := apiCfg.DB.CreateUrl(ctx, Url)
+	if err != nil {
+		if strings.Contains(err.Error(), "duplicate key") {
+			short_url, err = apiCfg.DB.GetUrlTokenByUrl(ctx, Url)
+			if err != nil {
+				return "", err
+			}
+			return short_url, nil
+		}
+		return "", err
+	}
+	return short_url, nil
+}
+
+func (apiCfg *apiConfig) createShortLinkExpire(
+	ctx context.Context,
+	Url string,
+	date_expire time.Time,
+) (string, error) {
+	args := database.CreateUrlWithExpireParams{
+		Url:       Url,
+		ExpiresAt: date_expire,
+	}
+	short_url, err := apiCfg.DB.CreateUrlWithExpire(ctx, args)
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key") {
 			short_url, err = apiCfg.DB.GetUrlTokenByUrl(ctx, Url)

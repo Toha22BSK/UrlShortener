@@ -65,6 +65,15 @@ func (o *CreateShortURL) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 // swagger:model CreateShortURLBody
 type CreateShortURLBody struct {
 
+	// days
+	Days int64 `json:"days,omitempty"`
+
+	// hours
+	Hours int64 `json:"hours,omitempty"`
+
+	// minutes
+	Minutes int64 `json:"minutes,omitempty"`
+
 	// url
 	URL string `json:"url,omitempty"`
 }

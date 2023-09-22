@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+	"time"
 )
 
 const createUrl = `-- name: CreateUrl :one
@@ -24,17 +25,17 @@ func (q *Queries) CreateUrl(ctx context.Context, url string) (string, error) {
 
 const createUrlWithExpire = `-- name: CreateUrlWithExpire :one
 INSERT INTO urls (token, url, created_at, expires_at, is_active)
-VALUES (MD5($1), $1, NOW(), NOW() + INTERVAL $2, TRUE)
+VALUES (MD5($1), $1, NOW(), $2, TRUE)
 RETURNING token
 `
 
 type CreateUrlWithExpireParams struct {
-	Url     string
-	Column2 int64
+	Url       string
+	ExpiresAt time.Time
 }
 
 func (q *Queries) CreateUrlWithExpire(ctx context.Context, arg CreateUrlWithExpireParams) (string, error) {
-	row := q.db.QueryRowContext(ctx, createUrlWithExpire, arg.Url, arg.Column2)
+	row := q.db.QueryRowContext(ctx, createUrlWithExpire, arg.Url, arg.ExpiresAt)
 	var token string
 	err := row.Scan(&token)
 	return token, err

@@ -79,6 +79,12 @@ paths:
             properties:
               url:
                 type: string
+              days:
+                type: integer
+              minutes:
+                type: integer
+              hours:
+                type: integer
       responses:
         200:
           description: OK
