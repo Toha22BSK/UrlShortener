@@ -4,7 +4,7 @@ VALUES (MD5($1), $1, NOW(), NOW() + INTERVAL '7 day', TRUE)
 RETURNING token;
 
 -- name: GetUrlByToken :one
-SELECT Url FROM urls WHERE token = $1;
+SELECT Url, is_active FROM urls WHERE token = $1;
 
 -- name: GetUrlTokenByUrl :one
 SELECT token FROM urls WHERE url = $1;

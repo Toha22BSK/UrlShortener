@@ -2,6 +2,7 @@ package urls
 
 import (
 	"context"
+	"errors"
 	"strings"
 
 	"github.com/Toha22BSK/UrlShortener/gen/database"
@@ -37,5 +38,28 @@ func (apiCfg *apiConfig) getUrl(ctx context.Context, short_url string) (string, 
 	if err != nil {
 		return "", err
 	}
-	return url, nil
+	if !url.IsActive {
+		return "", errors.New("Url is not active")
+	}
+	return url.Url, nil
+}
+
+func (apiCfg *apiConfig) writeLog(ctx context.Context, short_url string, msg string) error {
+	arg := database.WriteLogParams{
+		TokenUrl: short_url,
+		LogMsg:   msg,
+	}
+	err := apiCfg.DB.WriteLog(ctx, arg)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (apiCfg *apiConfig) getAnalitics(ctx context.Context, short_url string) (int64, error) {
+	count, err := apiCfg.DB.GetRedirectCount(ctx, short_url)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }

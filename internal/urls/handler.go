@@ -5,13 +5,17 @@ import (
 
 	"github.com/Toha22BSK/UrlShortener/gen/models"
 	"github.com/Toha22BSK/UrlShortener/gen/restapi/operations"
+	"github.com/Toha22BSK/UrlShortener/gen/restapi/operations/analytics"
 	"github.com/Toha22BSK/UrlShortener/gen/restapi/operations/short_url"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sirupsen/logrus"
 )
 
 type UrlService interface {
 	createShortLink(ctx context.Context, Url string) (string, error)
 	getUrl(ctx context.Context, shortUrl string) (string, error)
+	writeLog(ctx context.Context, shortUrl string, msg string) error
+	getAnalitics(ctx context.Context, shortUrl string) (int64, error)
 }
 
 func Configure(api *operations.BackendCoreAPI, urlService UrlService) {
@@ -19,7 +23,7 @@ func Configure(api *operations.BackendCoreAPI, urlService UrlService) {
 		func(params short_url.CreateShortURLParams) middleware.Responder {
 			if params.Data.URL == "" {
 				return short_url.NewCreateShortURLBadRequest().
-					WithPayload(&models.ErrorV1{Message: "Joke did not del in database"})
+					WithPayload(&models.ErrorV1{Message: "Not correct params, url is empty"})
 			}
 
 			shortUrl, err := urlService.createShortLink(
@@ -36,6 +40,10 @@ func Configure(api *operations.BackendCoreAPI, urlService UrlService) {
 	)
 	api.ShortURLGetShortURLHandler = short_url.GetShortURLHandlerFunc(
 		func(params short_url.GetShortURLParams) middleware.Responder {
+			if params.ShortURL == "" {
+				return short_url.NewCreateShortURLBadRequest().
+					WithPayload(&models.ErrorV1{Message: "Not correct params, short url is empty"})
+			}
 
 			url, err := urlService.getUrl(
 				params.HTTPRequest.Context(),
@@ -45,8 +53,38 @@ func Configure(api *operations.BackendCoreAPI, urlService UrlService) {
 				return short_url.NewCreateShortURLInternalServerError().
 					WithPayload(&models.ErrorV1{Message: "Ooops, something went wrong"})
 			}
-
+			err = urlService.writeLog(
+				params.HTTPRequest.Context(),
+				params.ShortURL,
+				"Redirect to "+url,
+			)
+			if err != nil {
+				logrus.WithError(err).Fatal("failed to write log")
+			}
 			return short_url.NewGetShortURLFound().WithLocation(url)
+		},
+	)
+	api.AnalyticsGetAnalyticsHandler = analytics.GetAnalyticsHandlerFunc(
+		func(params analytics.GetAnalyticsParams) middleware.Responder {
+			if params.ShortURL == "" {
+				return short_url.NewCreateShortURLBadRequest().
+					WithPayload(&models.ErrorV1{Message: "Not correct params, short url is empty"})
+			}
+
+			count, err := urlService.getAnalitics(
+				params.HTTPRequest.Context(),
+				params.ShortURL,
+			)
+			if err != nil {
+				return analytics.NewGetAnalyticsInternalServerError().
+					WithPayload(&models.ErrorV1{Message: "Ooops, something went wrong"})
+			}
+			if count == 0 {
+				return analytics.NewGetAnalyticsNotFound().
+					WithPayload("Nothing redirect with this short url")
+			}
+
+			return analytics.NewGetAnalyticsOK().WithPayload(&models.Analytics{Redirects: count})
 		},
 	)
 }

@@ -1,13 +1,12 @@
 -- migrate:up
-CREATE TABLE users (
-    id UUID PRIMARY KEY,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL
+CREATE TABLE urls (
+    token TEXT PRIMARY KEY,
+    url TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMP NOT NULL DEFAULT NOW() + INTERVAL '7 day',
+    is_active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 -- migrate:down
 
-DROP TABLE users;
-
+DROP TABLE urls;

@@ -58,13 +58,11 @@ func init() {
           "200": {
             "description": "OK",
             "schema": {
-              "type": "object",
-              "properties": {
-                "redirects": {
-                  "type": "number"
-                }
-              }
+              "$ref": "swagger/responses/analytics.yml"
             }
+          },
+          "400": {
+            "$ref": "#/responses/invalid-request"
           },
           "401": {
             "$ref": "#/responses/unauthorized"
@@ -226,12 +224,13 @@ func init() {
           "200": {
             "description": "OK",
             "schema": {
-              "type": "object",
-              "properties": {
-                "redirects": {
-                  "type": "number"
-                }
-              }
+              "$ref": "#/definitions/analytics"
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "schema": {
+              "$ref": "#/definitions/errorV1"
             }
           },
           "401": {
@@ -342,6 +341,16 @@ func init() {
     }
   },
   "definitions": {
+    "analytics": {
+      "description": "OK response with count",
+      "type": "object",
+      "title": "OK response with count",
+      "properties": {
+        "redirects": {
+          "type": "integer"
+        }
+      }
+    },
     "errorV1": {
       "description": "Standard error format",
       "type": "object",

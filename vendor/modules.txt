@@ -50,6 +50,9 @@ github.com/go-openapi/swag
 github.com/go-openapi/validate
 # github.com/google/go-cmp v0.5.8
 ## explicit; go 1.13
+# github.com/google/uuid v1.3.0
+## explicit
+github.com/google/uuid
 # github.com/jessevdk/go-flags v1.5.0
 ## explicit; go 1.15
 github.com/jessevdk/go-flags

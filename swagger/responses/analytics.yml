@@ -1,0 +1,6 @@
+title: OK response with count
+description: OK response with count
+type: object
+properties:
+  redirects:
+    type: integer

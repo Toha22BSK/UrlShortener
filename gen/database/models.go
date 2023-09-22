@@ -6,7 +6,16 @@ package database
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
+
+type AnaliticsLog struct {
+	ID        int64
+	TokenUrl  string
+	LogMsg    string
+	CreatedAt time.Time
+}
 
 type Url struct {
 	Token     string
@@ -14,4 +23,12 @@ type Url struct {
 	CreatedAt time.Time
 	ExpiresAt time.Time
 	IsActive  bool
+}
+
+type User struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	FirstName string
+	LastName  string
+	ApiKey    string
 }

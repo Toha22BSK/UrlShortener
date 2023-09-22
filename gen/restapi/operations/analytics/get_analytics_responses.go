@@ -26,7 +26,7 @@ type GetAnalyticsOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *GetAnalyticsOKBody `json:"body,omitempty"`
+	Payload *models.Analytics `json:"body,omitempty"`
 }
 
 // NewGetAnalyticsOK creates GetAnalyticsOK with default headers values
@@ -36,13 +36,13 @@ func NewGetAnalyticsOK() *GetAnalyticsOK {
 }
 
 // WithPayload adds the payload to the get analytics o k response
-func (o *GetAnalyticsOK) WithPayload(payload *GetAnalyticsOKBody) *GetAnalyticsOK {
+func (o *GetAnalyticsOK) WithPayload(payload *models.Analytics) *GetAnalyticsOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get analytics o k response
-func (o *GetAnalyticsOK) SetPayload(payload *GetAnalyticsOKBody) {
+func (o *GetAnalyticsOK) SetPayload(payload *models.Analytics) {
 	o.Payload = payload
 }
 
@@ -50,6 +50,51 @@ func (o *GetAnalyticsOK) SetPayload(payload *GetAnalyticsOKBody) {
 func (o *GetAnalyticsOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}
+
+// GetAnalyticsBadRequestCode is the HTTP code returned for type GetAnalyticsBadRequest
+const GetAnalyticsBadRequestCode int = 400
+
+/*
+GetAnalyticsBadRequest Invalid request
+
+swagger:response getAnalyticsBadRequest
+*/
+type GetAnalyticsBadRequest struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.ErrorV1 `json:"body,omitempty"`
+}
+
+// NewGetAnalyticsBadRequest creates GetAnalyticsBadRequest with default headers values
+func NewGetAnalyticsBadRequest() *GetAnalyticsBadRequest {
+
+	return &GetAnalyticsBadRequest{}
+}
+
+// WithPayload adds the payload to the get analytics bad request response
+func (o *GetAnalyticsBadRequest) WithPayload(payload *models.ErrorV1) *GetAnalyticsBadRequest {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the get analytics bad request response
+func (o *GetAnalyticsBadRequest) SetPayload(payload *models.ErrorV1) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *GetAnalyticsBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(400)
 	if o.Payload != nil {
 		payload := o.Payload
 		if err := producer.Produce(rw, payload); err != nil {

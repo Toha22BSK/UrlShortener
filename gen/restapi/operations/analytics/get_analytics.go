@@ -6,12 +6,9 @@ package analytics
 // Editing this file might prove futile when you re-run the generate command
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
 )
 
 // GetAnalyticsHandlerFunc turns a function with the right signature into a get analytics handler
@@ -58,41 +55,4 @@ func (o *GetAnalytics) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	res := o.Handler.Handle(Params) // actually handle the request
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
-}
-
-// GetAnalyticsOKBody get analytics o k body
-//
-// swagger:model GetAnalyticsOKBody
-type GetAnalyticsOKBody struct {
-
-	// redirects
-	Redirects float64 `json:"redirects,omitempty"`
-}
-
-// Validate validates this get analytics o k body
-func (o *GetAnalyticsOKBody) Validate(formats strfmt.Registry) error {
-	return nil
-}
-
-// ContextValidate validates this get analytics o k body based on context it is used
-func (o *GetAnalyticsOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (o *GetAnalyticsOKBody) MarshalBinary() ([]byte, error) {
-	if o == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(o)
-}
-
-// UnmarshalBinary interface implementation
-func (o *GetAnalyticsOKBody) UnmarshalBinary(b []byte) error {
-	var res GetAnalyticsOKBody
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*o = res
-	return nil
 }
