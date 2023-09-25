@@ -44,6 +44,11 @@ func configureAPI(api *operations.BackendCoreAPI) http.Handler {
 			return middleware.NotImplemented("operation short_url.CreateShortURL has not yet been implemented")
 		})
 	}
+	if api.ShortURLDeleteShortURLHandler == nil {
+		api.ShortURLDeleteShortURLHandler = short_url.DeleteShortURLHandlerFunc(func(params short_url.DeleteShortURLParams) middleware.Responder {
+			return middleware.NotImplemented("operation short_url.DeleteShortURL has not yet been implemented")
+		})
+	}
 	if api.AnalyticsGetAnalyticsHandler == nil {
 		api.AnalyticsGetAnalyticsHandler = analytics.GetAnalyticsHandlerFunc(func(params analytics.GetAnalyticsParams) middleware.Responder {
 			return middleware.NotImplemented("operation analytics.GetAnalytics has not yet been implemented")

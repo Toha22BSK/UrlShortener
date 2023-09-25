@@ -121,6 +121,39 @@ func init() {
             "$ref": "#/responses/server-error"
           }
         }
+      },
+      "delete": {
+        "description": "Delete short URL",
+        "tags": [
+          "ShortUrl"
+        ],
+        "summary": "Delete short URL",
+        "operationId": "deleteShortUrl",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "short-url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "no content"
+          },
+          "400": {
+            "$ref": "#/responses/invalid-request"
+          },
+          "500": {
+            "$ref": "#/responses/server-error"
+          }
+        }
       }
     },
     "/{short_url}": {
@@ -314,6 +347,45 @@ func init() {
             }
           }
         }
+      },
+      "delete": {
+        "description": "Delete short URL",
+        "tags": [
+          "ShortUrl"
+        ],
+        "summary": "Delete short URL",
+        "operationId": "deleteShortUrl",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "short-url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "no content"
+          },
+          "400": {
+            "description": "Invalid request",
+            "schema": {
+              "$ref": "#/definitions/errorV1"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/errorV1"
+            }
+          }
+        }
       }
     },
     "/{short_url}": {
@@ -365,7 +437,8 @@ func init() {
       "title": "OK response with count",
       "properties": {
         "redirects": {
-          "type": "integer"
+          "type": "integer",
+          "x-omitempty": false
         }
       }
     },

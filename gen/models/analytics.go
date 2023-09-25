@@ -20,7 +20,7 @@ import (
 type Analytics struct {
 
 	// redirects
-	Redirects int64 `json:"redirects,omitempty"`
+	Redirects int64 `json:"redirects"`
 }
 
 // Validate validates this analytics

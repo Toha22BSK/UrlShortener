@@ -48,6 +48,9 @@ func NewBackendCoreAPI(spec *loads.Document) *BackendCoreAPI {
 		ShortURLCreateShortURLHandler: short_url.CreateShortURLHandlerFunc(func(params short_url.CreateShortURLParams) middleware.Responder {
 			return middleware.NotImplemented("operation short_url.CreateShortURL has not yet been implemented")
 		}),
+		ShortURLDeleteShortURLHandler: short_url.DeleteShortURLHandlerFunc(func(params short_url.DeleteShortURLParams) middleware.Responder {
+			return middleware.NotImplemented("operation short_url.DeleteShortURL has not yet been implemented")
+		}),
 		AnalyticsGetAnalyticsHandler: analytics.GetAnalyticsHandlerFunc(func(params analytics.GetAnalyticsParams) middleware.Responder {
 			return middleware.NotImplemented("operation analytics.GetAnalytics has not yet been implemented")
 		}),
@@ -92,6 +95,8 @@ type BackendCoreAPI struct {
 
 	// ShortURLCreateShortURLHandler sets the operation handler for the create short Url operation
 	ShortURLCreateShortURLHandler short_url.CreateShortURLHandler
+	// ShortURLDeleteShortURLHandler sets the operation handler for the delete short Url operation
+	ShortURLDeleteShortURLHandler short_url.DeleteShortURLHandler
 	// AnalyticsGetAnalyticsHandler sets the operation handler for the get analytics operation
 	AnalyticsGetAnalyticsHandler analytics.GetAnalyticsHandler
 	// ShortURLGetShortURLHandler sets the operation handler for the get short Url operation
@@ -175,6 +180,9 @@ func (o *BackendCoreAPI) Validate() error {
 
 	if o.ShortURLCreateShortURLHandler == nil {
 		unregistered = append(unregistered, "short_url.CreateShortURLHandler")
+	}
+	if o.ShortURLDeleteShortURLHandler == nil {
+		unregistered = append(unregistered, "short_url.DeleteShortURLHandler")
 	}
 	if o.AnalyticsGetAnalyticsHandler == nil {
 		unregistered = append(unregistered, "analytics.GetAnalyticsHandler")
@@ -274,6 +282,10 @@ func (o *BackendCoreAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/url"] = short_url.NewCreateShortURL(o.context, o.ShortURLCreateShortURLHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/url"] = short_url.NewDeleteShortURL(o.context, o.ShortURLDeleteShortURLHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

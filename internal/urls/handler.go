@@ -18,6 +18,7 @@ type UrlService interface {
 	getUrl(ctx context.Context, shortUrl string) (string, error)
 	writeLog(ctx context.Context, shortUrl string, msg string) error
 	getAnalitics(ctx context.Context, shortUrl string) (int64, error)
+	deleteShortUrl(ctx context.Context, shortUrl string) error
 }
 
 func Configure(api *operations.BackendCoreAPI, urlService UrlService) {
@@ -102,6 +103,22 @@ func Configure(api *operations.BackendCoreAPI, urlService UrlService) {
 			}
 
 			return analytics.NewGetAnalyticsOK().WithPayload(&models.Analytics{Redirects: count})
+		},
+	)
+	api.ShortURLDeleteShortURLHandler = short_url.DeleteShortURLHandlerFunc(
+		func(params short_url.DeleteShortURLParams) middleware.Responder {
+			if params.Data.ShortURL == "" {
+				return short_url.NewCreateShortURLBadRequest().
+					WithPayload(&models.ErrorV1{Message: "Not correct params, short url is empty"})
+			}
+
+			err := urlService.deleteShortUrl(params.HTTPRequest.Context(), params.Data.ShortURL)
+			if err != nil {
+				return short_url.NewDeleteShortURLInternalServerError().
+					WithPayload(&models.ErrorV1{Message: "Ooops, something went wrong"})
+			}
+
+			return short_url.NewDeleteShortURLOK()
 		},
 	)
 }

@@ -97,6 +97,31 @@ paths:
 
         500:
           $ref: "#/responses/server-error"
+    delete:
+      tags:
+        - ShortUrl
+      summary: Delete short URL
+      description: Delete short URL
+      operationId: deleteShortUrl
+      parameters:
+        - name: data
+          in: body
+          schema:
+            type: object
+            properties:
+              short-url:
+                type: string
+      responses:
+        200:
+          description: no content
+        400:
+          $ref: "#/responses/invalid-request"
+        # 401:
+        #   $ref: "#/responses/unauthorized"
+
+        500:
+          $ref: "#/responses/server-error"
+
   /{short_url}:
     get:
       tags:
